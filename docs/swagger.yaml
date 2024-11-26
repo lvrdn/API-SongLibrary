@@ -1,0 +1,294 @@
+definitions:
+  song.Response:
+    additionalProperties: true
+    description: response format
+    type: object
+  song.Song:
+    description: song information
+    properties:
+      group:
+        type: string
+      id:
+        type: integer
+      link:
+        type: string
+      releaseDate:
+        type: string
+      song:
+        type: string
+      text:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: API for song library
+  title: SongLibrary Swagger API
+  version: "1.0"
+paths:
+  /api/songs:
+    delete:
+      description: Delete song
+      operationId: delete
+      parameters:
+      - description: song id
+        in: body
+        name: bodyJSON
+        required: true
+        schema:
+          example: '{"id":2}'
+          type: string
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/song.Response'
+            - properties:
+                error:
+                  allOf:
+                  - $ref: '#/definitions/song.Response'
+                  - properties:
+                      message:
+                        type: string
+                      path:
+                        type: string
+                      timestamp:
+                        type: string
+                    type: object
+              type: object
+        "500":
+          description: something bad with db or marshal/unmarshal data
+      summary: Delete song
+      tags:
+      - songs
+    get:
+      description: Get songs list with pagination and filtering by all fields
+      operationId: get-all
+      parameters:
+      - default: 0
+        description: Limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: song name
+        in: query
+        name: song
+        type: string
+      - description: group name
+        in: query
+        name: group
+        type: string
+      - description: year
+        in: query
+        name: releaseDate
+        type: string
+      - description: text, word, letters
+        in: query
+        name: text
+        type: string
+      - description: 'if need song with video use: true, else use:false'
+        in: query
+        name: link
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/song.Response'
+            - properties:
+                response:
+                  items:
+                    $ref: '#/definitions/song.Song'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/song.Response'
+            - properties:
+                error:
+                  allOf:
+                  - $ref: '#/definitions/song.Response'
+                  - properties:
+                      message:
+                        type: string
+                      path:
+                        type: string
+                      timestamp:
+                        type: string
+                    type: object
+              type: object
+        "500":
+          description: something bad with db or marshal/unmarshal data
+      summary: Get songs list with pagination and filtering by all fields
+      tags:
+      - songs
+    post:
+      description: Update song data
+      operationId: update
+      parameters:
+      - description: song id and at least one of the listed parameters required
+        in: body
+        name: bodyJSON
+        required: true
+        schema:
+          example: '{"id":2,"releaseDate":"25.02.2012","text":"some text","link":"some
+            link"}'
+          type: string
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/song.Response'
+            - properties:
+                error:
+                  allOf:
+                  - $ref: '#/definitions/song.Response'
+                  - properties:
+                      message:
+                        type: string
+                      path:
+                        type: string
+                      timestamp:
+                        type: string
+                    type: object
+              type: object
+        "500":
+          description: something bad with db or marshal/unmarshal data
+      summary: Update song data
+      tags:
+      - songs
+    put:
+      consumes:
+      - application/json
+      description: Add new song to library
+      operationId: new
+      parameters:
+      - description: song and group names
+        in: body
+        name: bodyJSON
+        required: true
+        schema:
+          example: '{"song":"sone song name","group":"some group name"}'
+          type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/song.Response'
+            - properties:
+                response:
+                  allOf:
+                  - $ref: '#/definitions/song.Response'
+                  - properties:
+                      id:
+                        type: integer
+                    type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/song.Response'
+            - properties:
+                error:
+                  allOf:
+                  - $ref: '#/definitions/song.Response'
+                  - properties:
+                      message:
+                        type: string
+                      path:
+                        type: string
+                      timestamp:
+                        type: string
+                    type: object
+              type: object
+        "500":
+          description: something bad with db or marshal/unmarshal data
+        "502":
+          description: something bad with another server for getting song info
+      summary: Add new song to library
+      tags:
+      - songs
+  /api/songs/{id}:
+    get:
+      description: Get song text with verse pagination
+      operationId: get
+      parameters:
+      - default: 0
+        description: Limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: song id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/song.Response'
+            - properties:
+                response:
+                  allOf:
+                  - $ref: '#/definitions/song.Response'
+                  - properties:
+                      id:
+                        type: integer
+                      resesInSong:
+                        type: integer
+                      verses:
+                        type: string
+                    type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/song.Response'
+            - properties:
+                error:
+                  allOf:
+                  - $ref: '#/definitions/song.Response'
+                  - properties:
+                      message:
+                        type: string
+                      path:
+                        type: string
+                      timestamp:
+                        type: string
+                    type: object
+              type: object
+        "500":
+          description: something bad with db or marshal/unmarshal data
+      summary: Get song text with verse pagination
+      tags:
+      - songs
+swagger: "2.0"
