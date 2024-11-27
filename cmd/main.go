@@ -46,13 +46,13 @@ func main() {
 
 	migration, err := migrate.New("file://migration", dsn)
 	if err != nil {
-		log.Println("error1 here:", err)
+		log.Println("create migration error:", err.Error())
 		return
 	}
 
 	err = migration.Up()
 	if err != nil && err != migrate.ErrNoChange {
-		log.Println("error2 here:", err)
+		log.Println("migratiom up error:", err.Error())
 		return
 	}
 
